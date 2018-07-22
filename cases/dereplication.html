@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../base.css">
+    <style lang="">
+        .dereplication {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dereplication">
+    <h4>方法一:</h4>
+    <pre>
+        // 定义新数组，遍历元素组，在新数组中，若原数组当前元素的索引为-1，将当前元素加入到新数组中
+        function dereplication1 ( arr ) {
+            var newArr = [];
+            for ( var i = 0; i < arr.length; i++ ) {
+                if( newArr.indexOf(arr[i]) == -1 ) {
+                    newArr.push(arr[i]);
+                }
+            }
+            return newArr;
+        }
+
+        // lastIndexOf
+        function dereplication2 ( arr ) {
+            var newArr = [];
+            for( var i = 0; i < arr.length; i++ ){
+                newArr.lastIndexOf(arr[i]) !== -1 ? "" : newArr.push(arr[i]);
+            }
+            return newArr;
+        }        
+    </pre>
+    <h4>方法二:</h4>
+    <pre>
+        // 定义一个对象和一个新数组，遍历原数组，若对象中的没有当前项的键，添加，值为true，并添加到新数组
+        function dereplication3 ( arr ) {
+            var obj = {};
+            var newArr = [];
+            for ( var i = 0; i < arr.length; i++ ) {
+                if( !obj[arr[i]] ) {
+                    obj[arr[i]] = true;
+                    newArr.push(arr[i]);
+                }
+            }
+            return newArr;
+        }
+    </pre>
+    <h4>方法三:</h4>
+    <pre>
+        // 先排序，后对比前后两个元素是否相等，不相等，添加到新数组
+        function dereplication4 ( arr ) {
+            arr.sort();
+            var newArr = [];
+            for ( var i = 0; i < arr.length; i++ ) {
+                if( arr[i] !== arr[i + 1] ) {
+                    newArr.push(arr[i]);
+                }
+            }
+            return newArr;
+        }
+    </pre>
+    <h4>方法四:</h4>
+    <pre>
+        // 创建新数组，并将元素组第一项添加到新数组中
+        // 循环两个素组，如果元素组中有和新数组一样的，break，没有，添加到新数组
+        function dereplication5 ( arr ) {
+            var newArr = [arr[0]];
+            for ( var i = 1; i < arr.length; i++ ) {
+                var repeat = false;
+                for( var j = 0; j < newArr.length; j++ ){
+                    if( arr[i] === newArr[j] ) {
+                        repeat = true;
+                        break;
+                    } 
+                }
+                if(!repeat) newArr.push(arr[i]);
+            }
+            return newArr;
+        }                        
+    </pre>
+    <h4>方法五:</h4>
+    <pre>
+        // 如果新数组不包含原数组当前元素，添加到新数组
+        function dereplication6 ( arr ) {
+            var newArr = [];
+            for ( var i = 0; i < arr.length; i++ ) {
+                if(!newArr.includes(arr[i])){ 
+                    newArr.push(arr[i]);
+                }
+            }
+            return newArr;
+        }                        
+    </pre>
+    <h4>方法六:</h4>
+    <pre>
+        // filter(返回新数组) & includes(返回布尔值)
+        function dereplication7 ( arr ) {
+            var newArr = [];
+            newArr = arr.filter(function(v, i, arr){
+                return newArr.includes(v) ? "" :newArr.push(v);
+            })
+            return newArr;
+        }
+
+        // forEach(没有返回值) & includes
+        function dereplication8 ( arr ) {
+            var newArr = [];
+            arr.forEach(function(v, i, arr){
+                newArr.includes(v) ? "" :newArr.push(v);
+            })
+            return newArr;
+        }        
+    </pre>
+    <h4>方法七:</h4>
+    <pre>
+        // 当前元素，与下面的元素对比，有重复的，删除，并且数组长度-1，内层循环变量-1
+        function dereplication9 ( arr ) {
+            var len = arr.length;
+            for( var i = 0; i < len; i++ ){
+                for( var j = i + 1; j < len; j++ ) {
+                    if( arr[i] == arr[j] ){
+                        arr.splice( j, 1 );
+                        j--;
+                        len--;
+                    }
+                }
+            }
+            return arr;
+        }
+    </pre>
+</div>  
+
+</body>
+</html>

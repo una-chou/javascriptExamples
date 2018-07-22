@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="base.css">
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .sideNav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100%;
+            box-shadow: 0px 0px 10px 5px #ccc;
+        }
+        .main {
+            width: 100%;
+            height: 100%;
+            padding-left: 210px;
+            box-sizing: border-box;
+        }
+        .sideNavList {
+            width: 210px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        li {
+            width: 200px;
+            height: 40px;
+            line-height: 40px;
+            box-sizing: border-box;
+            box-shadow: 0px 2px 2px 2px #ccc;
+            padding-left: 20px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+        .activeLi {
+            background: linear-gradient(to top, #517fa4 0%, #c9ffbf 0%, #ace0f9 100%);
+        }
+        .module {
+            display: none;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 4px;
+            padding-right: 0px;
+        }
+        .activeModule {
+            display: block;
+        }
+        /*iframe*/
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+        /*冒泡排序*/
+        .sortContent {
+            width: 100%;
+        }    
+    </style>
+</head>
+<body>
+    <div class="container"> 
+        <div class="sideNav">
+            <ul id="sideNavList" class="sideNavList">
+                <li class="activeLi" data-link="dereplication">数组去重</li>
+                <li data-link="sortArr">冒泡排序</li>
+                <li data-link="arrayFunctions">数组方法</li>
+                <li data-link="fibonacci">斐波那契数列</li>
+                <li data-link="carousel">轮播图</li>
+                <li data-link="accordion">手风琴</li>
+                <li data-link="carrousel">旋转木马</li>
+                <li data-link="FlappyBird">Flappy Bird</li>
+                <li data-link="quartz">机械表</li>
+                <li data-link="waterfall">瀑布流</li>
+                <li data-link="magnifier">放大镜</li>
+                <li data-link="searchInput">搜索框智能提示</li>
+                <li data-link="calculator">计算器</li>
+                <li data-link="drag">鼠标拖拽</li>
+            </ul>
+        </div>
+        <div class="main">
+            <div class="module activeModule">
+                <iframe src="cases/dereplication.html" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var sideNavListLis = document.getElementById("sideNavList").children;
+        var moduleList = document.getElementsByClassName("module");
+        var iframe = document.getElementsByTagName("iframe")[0];
+        for(var i = 0; i < sideNavListLis.length; i++){
+            sideNavListLis[i].index = i;
+            sideNavListLis[i].onclick = function(){
+                for(var k = 0; k < sideNavListLis.length; k++){
+                    sideNavListLis[k].className = "";
+                }
+                // for(var j = 0; j < moduleList.length; j++){
+                    // moduleList[j].style.display = "none";
+                // }
+                sideNavListLis[this.index].className = "activeLi";
+                // moduleList[this.index].style.display = "block";
+                console.log(this.getAttribute("data-link"))
+                iframe.setAttribute("src", "./cases/" + this.getAttribute("data-link") + ".html");
+            }
+        }
+    </script>
+</body>
+</html>

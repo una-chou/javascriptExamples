@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>手风琴</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        ul {
+            list-style: none
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        div {
+            width: 500px;
+            height: 200px;
+            margin: 0 auto;
+            border: 1px solid red;
+            overflow: hidden;
+        }
+
+        div li {
+            width: 100px;
+            height: 200px;
+            float: left;
+            /*background-image: url(images/1.jpg);*/
+            background-repeat: no-repeat;
+        }
+
+        div ul {
+            width: 1300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <script>
+        var box = document.getElementById("box");
+        var lis = box.getElementsByTagName("li");
+        for (var i = 0; i < lis.length; i++) {
+            //1.遍历每一个li 设置背景图
+            lis[i].style.backgroundImage = "url(images/" + (i + 1) + ".jpg)";
+            //2. 给每一个li注册鼠标经过事件 鼠标经过当前li 当前li变宽 其他li变窄
+            lis[i].onmouseover = function () {
+                //干掉所有人 让所有人的宽度变为100
+                for (var i = 0; i < lis.length; i++) {
+                    animate(lis[i], {"width": 30});
+                }
+                //留下我自己 让自己的宽度 渐渐地 变为800
+                animate(this, {"width": 380});
+            };
+        }
+        //3.鼠标离开box 所有li宽度 渐渐地 变为240
+        box.onmouseout = function () {
+            for (var i = 0; i < lis.length; i++) {
+                animate(lis[i], {width: 100})
+            }
+        };
+
+        function animate(obj, config) {
+            clearInterval(obj.timer);
+            obj.timer = setInterval(function () {
+                //每次间歇定时器调用动画代码的时候 先假设
+                var flag = true;//假设这一次 所有的属性都到达了目标值
+                for (var k in config) {
+                    var target = config[k];
+                    var leader = parseInt(getStyle(obj, k)) || 0;
+                    var step = (target - leader) / 10;
+                    step = step > 0 ? Math.ceil(step) : Math.floor(step);
+                    leader = leader + step;
+                    obj.style[k] = leader + "px";
+                    if (leader !== target) {//当前属性没到目标值
+                        flag = false;
+                    }
+                    console.log("非常消耗性能的代码");
+                }
+                if (flag) {//如果flag仍然是true说明都到了
+                    clearInterval(obj.timer);//清理定时器
+                }
+            }, 15);
+        }
+
+        function getStyle(obj, attr) {
+            if (window.getComputedStyle) {//如果有就是true
+                return window.getComputedStyle(obj)[attr];
+            } else {
+                return obj.currentStyle[attr];
+            }
+        }
+    </script>
+</body>
+</html>

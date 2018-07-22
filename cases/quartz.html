@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>机械表</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        .clock {
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+            background: url(images/clock.jpg) no-repeat;
+            position: relative;
+        }
+
+        .clock div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url(images/hour.png) no-repeat center center;
+        }
+
+        #m {
+            background-image: url(images/minute.png);
+        }
+
+        #s {
+            background-image: url(images/second.png);
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div id="h"></div>
+        <div id="m"></div>
+        <div id="s"></div>
+    </div>
+    <script>
+        var divH = document.getElementById("h");
+        var divM = document.getElementById("m");
+        var divS = document.getElementById("s");
+        //transform: rotate(30deg);
+        function clock() {
+            var date = new Date();
+            var ms = date.getMilliseconds();
+            var s = date.getSeconds() + ms / 1000;
+            //一圈 360度 60秒一圈 每过一秒转6度
+            divS.style.transform = "rotate(" + (s * 6) + "deg)";
+            var m = date.getMinutes() + s / 60;
+            //一圈 360度 60分钟一圈 每过一分钟转6度
+            //过去了的秒钟也要加上
+            divM.style.transform = "rotate(" + (m * 6) + "deg)";
+            var h = date.getHours() + m / 60;
+            //一圈 360度 12小时一圈 每过一小时转30度
+            //过去了的分钟数 也要算上 比如过去了30分钟 30/60 = 0.5
+            divH.style.transform = "rotate(" + (h * 30) + "deg)";
+        }
+        clock()
+        setInterval(clock, 50);
+    </script>
+    
+</body>
+</html>

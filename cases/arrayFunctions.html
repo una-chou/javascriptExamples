@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../base.css">
+    <style lang="">
+        .arrayFunctions {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="arrayFunctions">
+    <h4>数组的交集</h4>
+    <pre>
+        // 交集：属于a并且属于b
+        function intersection ( arr1, arr2 ) {
+            var newArr = [];
+            newArr = arr1.filter(function(v, i){
+                return arr2.indexOf(v) !== -1;
+            })
+            return newArr;
+        }        
+    </pre>
+    <h4>数组的差集</h4>
+    <pre>
+        // 差集：属于a但是不属于b
+        function differenceSet ( arr1, arr2 ) {
+            var newArr = [];
+            newArr = arr1.filter(function(v, i){
+                return arr2.indexOf(v) < 0; // arr2.indexOf(v) !== -1
+            })
+            return newArr;
+        }        
+    </pre>
+    <h4>
+        数组乱序
+    </h4>
+    <pre>
+        function disorder1 ( arr ) {
+            var newArr = [];
+            var i; // 数组的随机索引
+            var l = arr.length;
+            while ( l ) {
+                i = Math.floor( Math.random() * l );
+                newArr.push( arr[i] );
+                arr.splice( i, 1);
+                l--;
+            }
+            return newArr;
+        }
+
+        function disorder2 ( arr ) {
+            var newArr = [];
+            var i; // 数组的随机索引
+            var l = arr.length;
+            while ( l ) {
+                i = Math.floor( Math.random() * l-- );
+                newArr.push( arr.splice( i, 1 )[0] )
+            }
+            return newArr;
+        }
+
+        // 将数组的最后一项的值等于随机的数组中的值，随机的数组值等于最后一项的值
+        function disorder3 ( arr ) {
+            var l = arr.length; // 数组长度
+            var i; // 数组的随机索引
+            var end; // 数组的最后一项
+            while ( l ) {
+                i = Math.floor( Math.random() * l-- );
+                end = arr[l];
+                arr[l] = arr[i];
+                arr[i] = end;
+            }
+        }
+    </pre>
+    <h4>
+        判断是都是数组
+    </h4>
+    <pre>
+        Array.isArray(arr);
+        arr instanceof Array;
+        Object.prototype.toString.call(arr) == "[object Array]";
+    </pre>
+    <h4>
+        数组的增删方法 pop() shift() push() unshift()
+    </h4>
+    <pre>
+        arr.pop(); // 删除数组最后一项，返回值为最后一项的值
+        arr.shift(); // 删除数组的第一项，返回值为数组的第一项
+        arr.push(); // 从数组的最后添加元素，返回新的数组的长度
+        arr.unshift(); // 从数组的第一项添加元素，返回新的数组的长度
+    </pre>
+    <h4>
+        数组的索引 indexOf() lastIndexOf()
+    </h4>
+    <pre>
+        arr.indexOf("a"); // 数组中a元素的索引
+        arr.lastIndexOf("a"); // 数组中最后一项的a的索引
+
+        // 找出数组中某个元素出现的位置
+        function position ( arr, a ) {
+            var index = -1;
+            do {
+                index = arr.indexOf( a, index + 1 );
+                if ( index !== -1 ) {
+                    console.log( index );
+                }
+            } while ( index !== -1 )
+        }
+    </pre>
+    <h4>
+        数组拼接 join()
+    </h4>
+    <pre>
+        arr.join();
+
+        function joinArr ( arr, str ) {
+            var str = arr[0];
+            for ( var i = 0; i < arr.length; i++ ) {
+                str += arr[i];
+            }
+            return str;
+        }
+    </pre>
+    <h4>
+        翻转数组 reverse()
+    </h4>
+    <pre>
+        arr.reverse();
+
+        function reverseArr1 ( arr ) {
+            var newArr = [];
+            for( var i = 0; i < arr.length; i++ ) {
+                newArr[i] = arr[ arr.length - 1 - i ];
+            }
+            return newArr;
+        }
+
+        function reverseArr2 ( arr ) {
+            for( var i = 0; i < arr.length / 2; i++ ) {
+                var temp = arr[i];
+                arr[i] = arr[arr.length - 1 - i];
+                arr[arr.length - 1 - i] = temp;
+            }
+            return arr;
+        }
+    </pre>
+    <h4>
+        数组过滤 filter(), map(), forEach(), reduce() 和 reduceRight()
+    </h4>
+    <pre>
+        var newArr = arr.filter( item, index, arr ) {
+            return item < 1;
+        }
+        
+        var newArr = arr.map( item, index, arr ) {
+            return item += 5;
+        }
+        
+        // forEach没有返回值
+        var newArr = arr.forEach( item, index, arr ) {
+            console.log( item ); 
+        }
+
+        // reduce从开始遍历到最后
+        // reduceRight从最后开始遍历到第一个
+        // 接收两个参数，一个在每一项上调用的函数，另一个可选，作为归并开始的初始值，也就是前一个回调函数里的第一个参数值
+        // 第一个回调函数里面的参数共四个：前一个值，当前值，索引值，当前数组
+        var newArr = arr1.reduce(function(pre, cur, index, arr){
+            return pre;
+        });
+
+        var newArr1 = arr1.reduce(function(pre, cur, index, arr){
+            return pre;
+        }, 10);
+
+        var newArr2 = arr1.reduceRight(function(pre, cur, index, arr){
+            return pre;
+        });
+
+        var newArr3 = arr1.reduceRight(function(pre, cur, index, arr){
+            return pre + cur;
+        }, 11);
+        
+    </pre>
+    <h4>
+        数组判断 every() some()
+    </h4>
+    <pre>
+        // every --> 数组中每一个元素都满足条件，返回true
+        var newArr = arr.every( item, index, arr ) {
+            return item > 0;
+        }
+
+        // some --> 数组中只要有一个元素满足，就返回true
+        var newArr = arr.some( item, index, arr ) {
+            return item > 0;
+        }        
+    </pre>
+    <h4>
+        数组截取 slice, splice, split, substring, substr
+    </h4>
+    <pre>
+        slice( start, end )  --> 不改变原数组，返回被截取的字符串或数组
+            start 必填， 第一个索引为0，最后一个索引为-1
+            end 选填，值取不到，默认为从start开始的末尾的全部字符
+            "abcde".slice(0) --> "abcde"
+            "abcde".slice(0, 2) --> "ab"
+            "abcde".slice(-1) --> "e"
+        
+        splice( index, howmany, item1, ....itemx ) 只用于数组，删除或添加数组中的元素，返回被删除的元素，改变原数组
+            index --> 必填 要添加或删除的索引，负数是从末尾开始-1
+            howmany --> 必填 要删除的数量， 若为0，则不删除
+            item1...itemx --> 可选，向数组添加的新的元素
+            ["1", "2", "3"].splice(1, 1); --> ["2"]
+            ["1", "2", "3"].splice(-1, 1); --> ["3"]
+            ["1", "2", "3"].splice(-1, 1, "0", "0"); --> ["3"](这个也是被删除的元素)
+        
+        split( sep, howmany ) 切割数组或字符串
+            sep --> 必填 字符串或正则表达式，从该参数指定的地方切割
+            howmany --> 可选 指定返回的数组的最大长度，若没有，则整个字符串都被切割
+
+        subsuting( start, end ) --> 参数不能为负数
+            end 取不到，若end比start小，则自动调换位置
+            "abcde".substring(1, 2) --> "b"
+            "abcde".substring(2, 1) --> "b"
+
+        substr( start, length )
+            start --> 开始位置
+            length --> 字符串长度， 若没有，则返回开始位置到末尾的全部
+            "abcde".substr(3, 1) --> "d"
+            "abcde".substr(3) --> "de"
+            "abcde".substr(-1, 1) --> "e"
+    </pre>
+    <h4>
+        求一组数中的最大值和最小值以及所在位置
+    </h4>
+    <pre>
+        function maxAndMinInArray ( arr ) {
+            var max = arr[0];
+            var maxIndex = 0;
+            var min = arr[0];
+            var minIndex = 0;
+            for(var i = 0; i < arr.length; i++){
+                if(max <= arr[i]){
+                    max = arr[i];
+                    maxIndex = i;
+                }
+                if(min >= arr[i]){
+                    min = arr[i];
+                    minIndex = i;
+                }
+            }
+            return {
+                maxValue: max,
+                maxIndex: maxIndex.
+                minValue: min,
+                minIndex: minIndex
+            }
+        }
+        
+    </pre>
+    <h4>
+        判断某年是否是闰年 <br />
+        输入某年某月某日，判断这一天是这一年的第几天 <br />
+        今天到2017年12月31日还有多少天 <br />
+    </h4>
+    <pre>
+        function isRunNian(year){
+            if(year % 4 == 0 && year % 100 !== 0) return true;
+            return false;
+        }
+
+        function isDay(date){
+            var arr = date.split("-");
+            var year = parseInt(arr[0]);
+            var month = parseInt(arr[1]);
+            var day = parseInt(arr[2]);
+            var months = [];
+            if(isRunNian(year)){
+                months = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            } else {
+                months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            }
+
+            var days = 0;
+            for(var i = 0; i < month - 1; i++){
+                days += months[i];
+            }
+            if(month == 1) {
+                days = day;
+            } else {
+                days += day;
+            }            
+            return days;
+        }
+
+        // console.log("是今年的第" + isDay("2008-10-1") + "天");
+        // console.log("距离年底还差" + (isDay("2008-12-31") - isDay("2008-10-1")) + "天");
+
+        function whichDay(year, month, day){
+            var days = day;
+            for(var i = 0; i < month - 1; i++){
+                days += months[i];
+            }
+            if(isRunNian(year) && month >2){
+                days++;
+            }
+            return days;
+        }
+        // console.log(whichDay(2004, 3, 1));
+
+    </pre>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>瀑布流</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        }
+        
+        /*#box {*/
+        /*width: 1152px;*/
+        /*margin: 0 auto;*/
+        /*}*/
+        
+        img {
+        vertical-align: middle;
+        }
+        
+        ul, li {
+        list-style: none;
+        }
+        
+        #box ul {
+        /*padding: 5px;*/
+        /*border: 1px solid #ccc;*/
+        float: left;
+        list-style: none;
+        }
+  
+    </style>
+</head>
+<body>
+    <div id="box">
+    </div>
+
+    <script>
+        var datas = [
+            {"src": "images/P_000.jpg", "height": 288},
+            {"src": "images/P_001.jpg", "height": 288},
+            {"src": "images/P_002.jpg", "height": 288},
+            {"src": "images/P_003.jpg", "height": 129},
+            {"src": "images/P_004.jpg", "height": 284},
+            {"src": "images/P_005.jpg", "height": 253},
+            {"src": "images/P_006.jpg", "height": 245},
+            {"src": "images/P_007.jpg", "height": 343},
+            {"src": "images/P_008.jpg", "height": 238},
+            {"src": "images/P_009.jpg", "height": 159},
+            {"src": "images/P_010.jpg", "height": 289},
+            {"src": "images/P_011.jpg", "height": 127},
+            {"src": "images/P_012.jpg", "height": 282},
+            {"src": "images/P_013.jpg", "height": 144},
+            {"src": "images/P_014.jpg", "height": 269},
+            {"src": "images/P_015.jpg", "height": 282},
+            {"src": "images/P_016.jpg", "height": 142},
+            {"src": "images/P_017.jpg", "height": 279},
+            {"src": "images/P_018.jpg", "height": 289},
+            {"src": "images/P_019.jpg", "height": 262},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_000.jpg", "height": 288},
+            {"src": "images/P_001.jpg", "height": 288},
+            {"src": "images/P_002.jpg", "height": 288},
+            {"src": "images/P_003.jpg", "height": 129},
+            {"src": "images/P_004.jpg", "height": 284},
+            {"src": "images/P_005.jpg", "height": 253},
+            {"src": "images/P_006.jpg", "height": 245},
+            {"src": "images/P_007.jpg", "height": 343},
+            {"src": "images/P_008.jpg", "height": 238},
+            {"src": "images/P_009.jpg", "height": 159},
+            {"src": "images/P_010.jpg", "height": 289},
+            {"src": "images/P_011.jpg", "height": 127},
+            {"src": "images/P_012.jpg", "height": 282},
+            {"src": "images/P_013.jpg", "height": 144},
+            {"src": "images/P_014.jpg", "height": 269},
+            {"src": "images/P_015.jpg", "height": 282},
+            {"src": "images/P_016.jpg", "height": 142},
+            {"src": "images/P_017.jpg", "height": 279},
+            {"src": "images/P_018.jpg", "height": 289},
+            {"src": "images/P_019.jpg", "height": 262},
+            {"src": "images/P_020.jpg", "height": 274}
+        
+        ];
+        
+        var datas2 = [
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+            {"src": "images/P_020.jpg", "height": 274},
+
+        ]
+        
+        //--------------------创建ul---------------------
+        var box = document.getElementById("box");
+        //1 获取当前页面可视区域的宽度，与图片的宽度相除
+        var listCount = parseInt((myClient().width - 17) / 192);//计算出当前页面能放入多少列
+        console.log(listCount);
+        var list;
+        var heightArr = [];
+        //2 动态的创建ul
+        for (var i = 0; i < listCount; i++) {
+            list = document.createElement("ul");
+            box.appendChild(list);
+            //初始化每个ul的高度值为0，为了后续的计算可以使用
+            heightArr.push(0);
+        }
+        
+        //-------------------------创建li，放入到某个ul中---------------
+        
+        //现在我们要进行li的创建了，每个li中具有一个img
+        //每次进行放入时，需要找到当前高度最小的ul，进行放入
+        //放入后需要修改ul的高度记录的数据，我们就需要知道当前的li多高，
+        //由于网络加载的问题，不能直接获取offsetHeight等值，可以使用datas中提供的高度属性
+        //高度数组与每一个ul是对应关系
+        
+        
+        createPic(datas);
+        
+        
+        //---------------------触底加载------
+        window.onscroll = function () {
+            //如果当前可视区域的高度+页面卷曲的高度>最低的ul的高度，进行加载
+            var minHeight = getMin(heightArr).value;
+            /*if(myClient().height + myScroll().scrollTop > minHeight){
+            //加载新的图片,后面的时候，我们可以将datas2更改为从服务器请求到的数据，进行替换即可。
+            createPic(datas2);
+            }*/
+        };
+        
+        
+        
+        function createPic(datas) {
+            //创建li，和内部的图片，创建的个数根据datas中对象的个数即可
+            var uls = box.children;//所有的ul
+            var li, img, index;
+            for (var i = 0; i < datas.length; i++) {
+            li = document.createElement("li");
+            img = document.createElement("img");
+            //设置src，从datas[i].src取到
+            img.src = datas[i].src;
+            li.appendChild(img);
+            
+            //我们需要将当前li放入到，高度最小的ul中
+            //获取最小值的索引，到所有的ul中找到对应的标签，进行添加即可
+            index = getMin(heightArr).index;
+            uls[index].appendChild(li);
+            
+            //更新heightArr中对应ul的高度
+            //datas[i].height当前li的高度
+            heightArr[index] += datas[i].height;
+            }
+        }
+        
+        //计算数组最小值
+        function getMin(arr) {
+            var minValue = arr[0];
+            var minIndex = 0;
+            for (var i = 0; i < arr.length; i++) {
+            if (minValue > arr[i]) {
+                minValue = arr[i];
+                minIndex = i;
+            }
+            }
+            return {
+            index: minIndex,
+            value: minValue
+            };
+        }
+        
+        //页面可视区域宽高：
+        function myClient() {
+            return {
+            width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0,
+            height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0
+            }
+        }
+        
+        function myScroll() {
+            return {
+            scrollTop: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0,
+            scrollLeft: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0
+            };
+        }
+    </script>
+    
+</body>
+</html>

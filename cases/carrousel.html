@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>旋转木马</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        blockquote, body, button, dd, dl, dt, fieldset, form, h1, h2, h3, h4, h5, h6, hr, input, legend, li, ol, p, pre, td, textarea, th, ul {
+            margin: 0;
+            padding: 0
+        }
+
+        body, button, input, select, textarea {
+            font: 12px/1.5 "Microsoft YaHei", "微软雅黑", SimSun, "宋体", sans-serif;
+            color: #666;
+        }
+
+        ol, ul {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        fieldset, img {
+            border: 0;
+            vertical-align: top;
+        }
+
+        a, input, button, select, textarea {
+            outline: none;
+        }
+
+        a, button {
+            cursor: pointer;
+        }
+
+        .wrap {
+            width: 1200px;
+            margin: 100px auto;
+        }
+
+        .slide {
+            height: 500px;
+            position: relative;
+        }
+
+        .slide li {
+            position: absolute;
+            left: 200px;
+            top: 0;
+        }
+
+        .slide li img {
+            width: 100%;
+        }
+
+        .arrow {
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .prev, .next {
+            width: 76px;
+            height: 112px;
+            position: absolute;
+            z-index: 99;
+        }
+
+        .prev {
+            left: 0;
+            background: url(./images/prev.png) no-repeat;
+        }
+
+        .next {
+            right: 0;
+            background-image: url(./images/next.png);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="wrap" id="wrap">
+        <div class="slide" id="slide">
+            <ul>
+                <li><a href="#"><img src="images/1.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="images/2.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="images/3.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="images/4.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="images/5.jpg" alt=""/></a></li>
+            </ul>
+            <div class="arrow" id="arrow">
+                <a href="javascript:;" class="prev" id="arrLeft"></a>
+                <a href="javascript:;" class="next" id="arrRight"></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+
+            var configs = [
+                {
+                    width: 400,
+                    top: 20,
+                    left: 50,
+                    opacity: 0.2,
+                    zIndex: 2
+                },//0
+                {
+                    width: 600,
+                    top: 70,
+                    left: 0,
+                    opacity: 0.8,
+                    zIndex: 3
+                },//1
+                {
+                    width: 800,
+                    top: 100,
+                    left: 200,
+                    opacity: 1,
+                    zIndex: 4
+                },//2
+                {
+                    width: 600,
+                    top: 70,
+                    left: 600,
+                    opacity: 0.8,
+                    zIndex: 3
+                },//3
+                {
+                    width: 400,
+                    top: 20,
+                    left: 750,
+                    opacity: 0.2,
+                    zIndex: 2
+                }//4
+            ];//其实就是一个配置单 规定了每张图片的大小位置层级透明度
+
+            //0.找人
+            var wrap = document.getElementById("wrap");
+            var slide = document.getElementById("slide");
+            var ul = slide.children[0];
+            var lis = ul.children;
+            var arrow = document.getElementById("arrow");
+            var arrLeft = document.getElementById("arrLeft");
+            var arrRight = document.getElementById("arrRight");
+            //1.鼠标经过盒子让箭头渐渐地显示
+            wrap.onmouseover = function () {
+                animate(arrow, {opacity: 1});
+            };
+            wrap.onmouseout = function () {
+                animate(arrow, {opacity: 0});
+            };
+
+            //2. 让所有的li 跑到指定位置去
+            function assign() {
+                for (var i = 0; i < lis.length; i++) {
+                    //lis[i]
+                    animate(lis[i], configs[i], function () {
+                        //动画执行完成后 才执行这个回调函数
+                        flag = true;//动画执行完了 重新打开阀门
+
+                    });//把每一个配置设置给每一个li
+                }
+            }
+
+            assign();
+            //3.点击左箭头 去旋转
+            arrRight.onclick = function () {
+                if (flag) {//如果阀门是打开的 才执行动画
+                    flag = false;//进来之后就立即把阀门关闭
+                    configs.push(configs.shift());
+                    assign();
+                }
+            };
+            arrLeft.onclick = function () {
+                if (flag) {
+                    configs.unshift(configs.pop());
+                    assign();
+                    flag = false;
+                }
+
+            };
+            //4.添加节流阀
+            var flag = true;//阀门是打开的
+        };
+
+        function animate(obj, config, fn) {
+            clearInterval(obj.timer);
+            obj.timer = setInterval(function () {
+                var flag = true;
+                for (var k in config) {
+                    if (k === "opacity") {
+                        var target = config[k] * 100;
+                        var leader = getStyle(obj, k) * 100;
+                        var step = (target - leader) / 10;
+                        step = step > 0 ? Math.ceil(step) : Math.floor(step);
+                        leader = leader + step;
+                        obj.style[k] = leader / 100;
+                    } else if (k === "zIndex") {
+                        obj.style.zIndex = config[k];
+                    } else {
+                        var target = config[k];
+                        var leader = parseInt(getStyle(obj, k)) || 0;
+                        var step = (target - leader) / 10;
+                        step = step > 0 ? Math.ceil(step) : Math.floor(step);
+                        leader = leader + step;
+                        obj.style[k] = leader + "px";
+                    }
+                    if (leader !== target) {
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    clearInterval(obj.timer);
+                    if (fn) {
+                        fn();
+                    }
+                }
+            }, 15);
+        }
+
+        function getStyle(obj, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(obj)[attr];
+            } else {
+                return obj.currentStyle[attr];
+            }
+        }
+
+    </script>
+</body>
+</html>

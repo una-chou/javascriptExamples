@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flappy Bird</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #game {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #000;
+            background: url(images/sky.png);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #game .pipeD {
+            background: url(images/pipe1.png) top center;
+            position: absolute;
+        }
+
+        #game .pipeU {
+            background: url(images/pipe2.png) bottom center;
+            position: absolute;
+        }
+
+        #bird {
+            width: 34px;
+            height: 25px;
+            /*border-radius: 10px;*/
+            /*background-color: red;*/
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            background: url(images/birds.png) -8px -10px no-repeat;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="bird"></div>
+    </div>
+    <script>
+        var timer = null;
+        var game = document.getElementById("game");
+        var birdDiv = document.getElementById("bird");
+        var g = 1;//重力加速度
+        var gameover = false;//记录玩家状态的变量
+
+        //1.寻找对象
+        //小鸟对象
+        var bird = {
+            x: birdDiv.offsetLeft,//水平位置
+            y: birdDiv.offsetTop,//竖直位置
+            speedX: 5,//水平速度
+            speedY: 0,//竖直速度
+            entity: birdDiv//小鸟对象在页面上的实体
+        };
+        //天空对象
+        var sky = {
+            x: 0//天空的水平位置
+        };
+        timer = setInterval(function () {
+            if (!gameover) {
+                sky.x = sky.x - bird.speedX;
+                game.style.backgroundPositionX = sky.x + "px";
+                //计算小鸟的竖直位置
+                bird.speedY = bird.speedY + g;
+                var step = bird.speedY;
+                bird.y = bird.y + step;
+                //4.碰撞检测
+                if (bird.y < 0) {
+                    bird.y = 0;
+                    //gameover = true;//死翘翘了
+                    stop();
+                }
+                if (bird.y > game.offsetHeight - birdDiv.offsetHeight) {
+                    bird.y = game.offsetHeight - birdDiv.offsetHeight;
+                    //gameover = true;//死翘翘了
+                    stop();
+                }
+                //设置小鸟的竖直位置
+                bird.entity.style.top = bird.y + "px";
+            }
+        }, 25);
+        document.onclick = function () {
+            bird.speedY = -10;
+        };
+        document.onkeyup = function (e) {
+            console.log(e.keyCode);
+            if (e.keyCode === 87) {
+                bird.speedY = -10;
+            }
+        };
+
+        //管子（管子有很多 一会再去批量创建）
+        //5.顶部管子 通过构造函数批量创建管子
+        function Pipe(positionX) {
+            this.x = positionX;
+            this.upPipeY = 0;
+            this.width = 52;
+            this.upPipeH = parseInt(Math.random() * 175 + 100);
+            this.downPipeY = this.upPipeH + 200;
+            this.downPipeH = 600 - this.downPipeY;
+            var divUp = document.createElement("div");
+            game.appendChild(divUp);
+            divUp.className = "pipeU";
+            divUp.style.left = this.x + "px";
+            divUp.style.top = this.upPipeY + "px";
+            divUp.style.width = this.width + "px";
+            divUp.style.height = this.upPipeH + "px";
+            var divDown = document.createElement("div");
+            game.appendChild(divDown);
+            divDown.className = "pipeD";
+            divDown.style.left = this.x + "px";
+            divDown.style.top = this.downPipeY + "px";
+            divDown.style.width = this.width + "px";
+            divDown.style.height = this.downPipeH + "px";
+            //console.log(this);
+            var that = this;
+            this.timer = setInterval(function () {
+                console.log("a");
+                //leader = leader + step
+                //this.x = this.x + step
+                //console.log(this);//this指的是window
+                that.x = that.x - 1;
+                //判断一下 如果管子从左边出去了 就重新放到右边
+                if (that.x < -52) {//<0只是左侧出去了 应该是右侧完全出去了 才放到右边
+                    that.x = 800;
+                }
+                if (!gameover) {
+                    //设置 上下管子的位置
+                    divUp.style.left = that.x + "px";
+                    divDown.style.left = that.x + "px";
+                }
+                //底部管子的碰撞
+                var downCrash = (bird.x + 34 > that.x) && (bird.x < that.x + 52) && (bird.y + 25 > that.downPipeY);
+                var upCrash = (bird.x + 34 > that.x) && (bird.x < that.x + 52) && (bird.y < that.upPipeH);
+                if (downCrash || upCrash) {
+                    //gameover = true;
+                    stop();
+                }
+
+            }, 10);
+        }
+        /*new Pipe(400)
+        new Pipe(600)
+        new Pipe(800)
+        new Pipe(1000)*/
+
+        var arr = [];
+        for (var i = 0; i < 4; i++) {
+            var p = new Pipe(400 + i * 200);
+            arr.push(p);
+        }
+
+
+        //终止游戏的函数
+        function stop() {
+            gameover = true;
+            clearInterval(timer);
+            for (var i = 0; i < arr.length; i++) {
+                //arr[i].timer//里面保存的是每组管子的定时器的id
+                clearInterval(arr[i].timer);
+            }
+        }
+    </script>    
+</body>
+</html>

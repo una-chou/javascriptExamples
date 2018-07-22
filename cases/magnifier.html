@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>放大镜</title>
+    <link rel="stylesheet" href="../base.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            width: 350px;
+            height: 350px;
+            margin: 0 100px;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .big {
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            top: 0;
+            left: 360px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            display: none;
+        }
+
+        .mask {
+            width: 175px;
+            height: 175px;
+            background: rgba(255, 255, 0, 0.4);
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: move;
+            display: none;
+        }
+
+        .small {
+            position: relative;
+        }
+
+        .box img {
+            vertical-align: top;
+        }
+
+        #bigBox img {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="box" id="box">
+        <div id="smallBox" class="small">
+            <img src="./images/001.jpg" width="350" alt=""/>
+
+            <div id="mask" class="mask"></div>
+        </div>
+        <div id="bigBox" class="big">
+            <img id="bigImg" src="./images/0001.jpg" width="800" alt=""/>
+        </div>
+    </div>
+    <script>
+        //0.找人
+        var box = document.getElementById("box");
+        var smallBox = document.getElementById("smallBox");
+        var bigBox = document.getElementById("bigBox");
+        var bigImg = document.getElementById("bigImg");
+        var mask = document.getElementById("mask");
+        //1. 鼠标经过盒子 显示mask和bigBox
+        smallBox.onmouseover = function () {
+            mask.style.display = "block";
+            bigBox.style.display = "block";
+        };
+        smallBox.onmouseout = function () {
+            mask.style.display = "none";
+            bigBox.style.display = "none";
+        };
+        //2. 遮罩跟随鼠标的座标去移动
+        smallBox.onmousemove = function (event) {
+            var event = event || window.event;
+            //获取鼠标在页面中的位置
+            var pageX = event.pageX || event.clientX + document.documentElement.scrollLeft;
+            var pageY = event.pageY || event.clientY + document.documentElement.scrollTop;
+            //获取鼠标在盒子中的位置
+            //注意smallBox.offsetLeft是0 因为box有定位 所以应该用box.offsetLeft
+            var boxX = pageX - box.offsetLeft;
+            var boxY = pageY - box.offsetTop;
+            //计算mask的位置
+            var maskX = boxX - mask.offsetWidth / 2;//往左走自身宽度的一半
+            var maskY = boxY - mask.offsetHeight / 2;//往上走自身高度的一半
+            //3.限定遮罩的移动范围
+            if (maskX < 0) {
+                maskX = 0
+            }
+            //mask的最大的移动范围是 小盒子的宽度-mask的宽度
+            if (maskX > smallBox.offsetWidth - mask.offsetWidth) {
+                maskX = smallBox.offsetWidth - mask.offsetWidth;
+            }
+            if (maskY < 0) {
+                maskY = 0
+            }
+            //mask的最大的移动范围是 小盒子的高度-mask的高度
+            if (maskY > smallBox.offsetHeight - mask.offsetHeight) {
+                maskY = smallBox.offsetHeight - mask.offsetHeight;
+            }
+            //设置mask的位置
+            mask.style.left = maskX + "px";
+            mask.style.top = maskY + "px";
+            //4. 按照比例移动大图片
+            //大图片现在的位置/遮罩现在的位置=大图能移动的总距离/遮罩能移动的总距离
+            //大图片现在的位置=大图能移动的总距离/遮罩能移动的总距离*遮罩现在的位置
+            //rate = 大图能移动的总距离/遮罩能移动的总距离
+            //大图片现在的位置=rate*遮罩现在的位置
+            //大图能移动的总距离=大图的宽度-大盒子的宽度
+            var bigImgToMove = bigImg.offsetWidth - bigBox.offsetWidth;
+            //遮罩能移动的总距离=小盒子的宽度-遮罩的宽度
+            var maskToMove = smallBox.offsetWidth - mask.offsetWidth;
+            //rate = 大图能移动的总距离/遮罩能移动的总距离
+            var rate = bigImgToMove / maskToMove;
+            //大图片现在的位置=rate*遮罩现在的位置
+            bigImg.style.left = -rate * maskX + "px";//记得加单位
+            bigImg.style.top = -rate * maskY + "px";//记得加单位
+
+
+        };
+    </script>
+    
+</body>
+</html>
